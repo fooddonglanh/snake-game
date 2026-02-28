@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Snake Game — Game rắn săn mồi trực tuyến với giao diện đẹp mắt, tính năng đăng nhập và lưu lịch sử điểm số." />
+  <title>🐍 Snake Game — Rắn Săn Mồi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div id="app">
+
+    <!-- ==================== HEADER ==================== -->
+    <header class="glass-panel app-header">
+      <h1 class="app-title">🐍 Snake Game</h1>
+      <p class="app-subtitle">Rắn Săn Mồi — Thu thập điểm cao nhất!</p>
+      <div class="header-user-bar hidden" id="user-bar">
+        <span class="user-greeting">Xin chào, <strong id="display-username"></strong></span>
+        <button class="btn btn-danger btn-sm" id="btn-logout">Đăng xuất</button>
+      </div>
+    </header>
+
+    <!-- ==================== AUTH VIEW ==================== -->
+    <section class="view active" id="view-auth">
+      <div class="glass-panel">
+
+        <!-- Login Form -->
+        <div id="form-login">
+          <h2 class="text-center mb-1" style="font-size:1.2rem;font-weight:600;color:var(--text-secondary);">Đăng Nhập
+          </h2>
+          <div class="form-group">
+            <label class="form-label" for="login-username">Tên đăng nhập</label>
+            <input class="form-input" type="text" id="login-username" placeholder="Nhập tên đăng nhập"
+              autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Mật khẩu</label>
+            <input class="form-input" type="password" id="login-password" placeholder="Nhập mật khẩu"
+              autocomplete="current-password" />
+          </div>
+          <p class="form-error" id="login-error"></p>
+          <button class="btn btn-primary btn-block" id="btn-login">Đăng nhập</button>
+          <p class="form-footer">
+            Chưa có tài khoản?
+            <button class="link-btn" id="switch-to-register">Đăng ký ngay</button>
+          </p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="form-register" class="hidden">
+          <h2 class="text-center mb-1" style="font-size:1.2rem;font-weight:600;color:var(--text-secondary);">Đăng Ký
+          </h2>
+          <div class="form-group">
+            <label class="form-label" for="reg-username">Tên đăng nhập</label>
+            <input class="form-input" type="text" id="reg-username" placeholder="Chọn tên đăng nhập"
+              autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Mật khẩu</label>
+            <input class="form-input" type="password" id="reg-password" placeholder="Chọn mật khẩu"
+              autocomplete="new-password" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-password2">Xác nhận mật khẩu</label>
+            <input class="form-input" type="password" id="reg-password2" placeholder="Nhập lại mật khẩu"
+              autocomplete="new-password" />
+          </div>
+          <p class="form-error" id="reg-error"></p>
+          <button class="btn btn-primary btn-block" id="btn-register">Đăng ký</button>
+          <p class="form-footer">
+            Đã có tài khoản?
+            <button class="link-btn" id="switch-to-login">Đăng nhập</button>
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== GAME VIEW ==================== -->
+    <section class="view" id="view-game">
+
+      <!-- Navigation Tabs -->
+      <div class="nav-tabs">
+        <button class="nav-tab active" id="tab-game" data-tab="game">🎮 Chơi Game</button>
+        <button class="nav-tab" id="tab-history" data-tab="history">📊 Lịch Sử</button>
+      </div>
+
+      <!-- Game Panel -->
+      <div class="glass-panel game-container" id="panel-game">
+        <div class="game-stats">
+          <div class="stat-item">
+            <div class="stat-label">Điểm</div>
+            <div class="stat-value" id="stat-score">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Kỷ lục</div>
+            <div class="stat-value" id="stat-high">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Thời gian</div>
+            <div class="stat-value" id="stat-time">0:00</div>
+          </div>
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas id="game-canvas"></canvas>
+          <div class="game-over-overlay" id="game-over-overlay">
+            <div class="game-over-text">Game Over!</div>
+            <div class="game-over-score" id="game-over-score">Điểm: 0</div>
+            <button class="btn btn-primary" id="btn-restart">Chơi lại</button>
+          </div>
+        </div>
+
+        <div class="game-controls">
+          <button class="btn btn-blue" id="btn-start">▶ Bắt đầu</button>
+          <button class="btn btn-blue-outline" id="btn-pause" disabled>⏸ Tạm dừng</button>
+        </div>
+
+        <!-- Mobile D-Pad -->
+        <div class="mobile-dpad">
+          <div class="dpad-row">
+            <div class="dpad-spacer"></div>
+            <button class="dpad-btn" data-dir="up">▲</button>
+            <div class="dpad-spacer"></div>
+          </div>
+          <div class="dpad-row">
+            <button class="dpad-btn" data-dir="left">◀</button>
+            <div class="dpad-spacer"></div>
+            <button class="dpad-btn" data-dir="right">▶</button>
+          </div>
+          <div class="dpad-row">
+            <div class="dpad-spacer"></div>
+            <button class="dpad-btn" data-dir="down">▼</button>
+            <div class="dpad-spacer"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- History Panel -->
+      <div class="glass-panel history-section hidden" id="panel-history">
+        <h3>📊 Lịch Sử Chơi</h3>
+        <div class="history-table-wrapper">
+          <table class="history-table" id="history-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Điểm</th>
+                <th>Thời gian chơi</th>
+                <th>Đăng nhập lúc</th>
+                <th>Ngày chơi</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody"></tbody>
+          </table>
+          <div class="empty-history hidden" id="empty-history">
+            <div class="empty-icon">🎮</div>
+            <p>Chưa có lịch sử chơi nào.<br />Hãy bắt đầu chơi game!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Scripts (order matters) -->
+  <script src="auth.js"></script>
+  <script src="history.js"></script>
+  <script src="game.js"></script>
+  <script src="app.js"></script>
+
+</body>
+
+</html>
